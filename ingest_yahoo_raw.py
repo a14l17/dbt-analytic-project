@@ -1,18 +1,8 @@
 
 ##pulling daily data from yahoo finance##
-
-##import necessary libraries##
-import sys
 import yfinance as yf
 import pandas as pd
-from google.cloud import bigquery
 from datetime import datetime
-
-##bigquery connection setup##
-##note: to be updated on public repo##
-PROJECT_ID = "dbt-demo-project-485817"
-DATASET_ID = "raw_yahoo"
-TABLE_ID = "raw_yahoo_prices"
 
 ## pull daily prices from Yahoo Finance ##
 def fetch_yahoo_prices(symbols, start_date, end_date):
@@ -47,44 +37,16 @@ def fetch_yahoo_prices(symbols, start_date, end_date):
 
     return pd.DataFrame(rows)
 
-## BigQuery load ##
-def load_to_bigquery(df):
-    client = bigquery.Client(project=PROJECT_ID)
-    table_ref = f"{PROJECT_ID}.{DATASET_ID}.{TABLE_ID}"
-
-    job_config = bigquery.LoadJobConfig(
-        write_disposition="WRITE_APPEND"  # append new rows
-    )
-
-    job = client.load_table_from_dataframe(df, table_ref, job_config=job_config)
-    job.result()
-
-    print(f"Loaded {job.output_rows} rows into {table_ref}")
-
-
 if __name__ == "__main__":
-
-    if len(sys.argv) < 4:
-        print("Usage: python3 yahoo_finance_ds.py <SYMBOLS_COMMA_SEPARATED> <START_DATE> <END_DATE>")
-        sys.exit(1)
-
-    symbols = sys.argv[1].split(",")
-    start_date = sys.argv[2]
-    end_date = sys.argv[3]
+    symbols = ["AAPL", "MSFT", "GOOGL"]
 
     df = fetch_yahoo_prices(
         symbols=symbols,
-        start_date=start_date,
-        end_date=end_date
+        start_date="2018-01-01",
+        end_date="2024-01-01"
     )
 
-    print(f"Rows fetched: {len(df)}")
-
-    load_to_bigquery(df)
-
-
-
+    print(df.head())
+    print(f"Rows loaded: {len(df)}")
 ## to run the above code, keep below line commented ot##
 # python3 yahoo_finance_ds.py
-#    print(df.head())
-#    print(f"Rows loaded: {len(df)}")
