@@ -1,0 +1,9 @@
+version: 2
+
+sources:
+  - name: raw_yahoo
+    database: dbt-demo-project-485817
+    schema: raw_yahoo
+
+    tables:
+      - name: raw_yahoo_prices
