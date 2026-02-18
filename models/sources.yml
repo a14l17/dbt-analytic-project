@@ -7,3 +7,11 @@ sources:
 
     tables:
       - name: raw_yahoo_prices
+        loaded_at_field: ingestion_timestamp   # column tracking load time
+        freshness:
+          warn_after:
+            count: 1
+            period: day
+          error_after:
+            count: 3
+            period: day
